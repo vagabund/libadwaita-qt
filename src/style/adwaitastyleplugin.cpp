@@ -29,22 +29,12 @@ namespace Adwaita
 
 QStyle *StylePlugin::create(const QString &key)
 {
-    if (key.toLower() == QStringLiteral("libadwaita") || key.toLower() == QStringLiteral("adwaita")) {
+    if (key.toLower() == QStringLiteral("libadwaita")) {
         return new Style(Adwaita::Adwaita);
     }
 
-    if (key.toLower() == QStringLiteral("libadwaita-dark") || key.toLower() == QStringLiteral("adwaita-dark")) {
+    if (key.toLower() == QStringLiteral("libadwaita-dark")) {
         return new Style(Adwaita::AdwaitaDark);
-    }
-
-    if (key.toLower() == QStringLiteral("adwaita-highcontrast") ||
-        key.toLower() == QStringLiteral("highcontrast")) {
-        return new Style(Adwaita::AdwaitaHighcontrast);
-    }
-
-    if (key.toLower() == QStringLiteral("adwaita-highcontrastinverse") ||
-        key.toLower() == QStringLiteral("highcontrastinverse")) {
-        return new Style(Adwaita::AdwaitaHighcontrastInverse);
     }
 
     return nullptr;
@@ -56,8 +46,7 @@ StylePlugin::~StylePlugin()
 
 QStringList StylePlugin::keys() const
 {
-    return QStringList() << QStringLiteral("libAdwaita") << QStringLiteral("libAdwaita-Dark")
-                         << QStringLiteral("Adwaita-HighContrast") << QStringLiteral("Adwaita-HighContrastInverse");
+    return QStringList() << QStringLiteral("libAdwaita") << QStringLiteral("libAdwaita-Dark");
 }
 
 } // namespace Adwaita

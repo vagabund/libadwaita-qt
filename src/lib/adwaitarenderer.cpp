@@ -1027,17 +1027,13 @@ void Renderer::renderProgressBarGroove(const StyleOptions &options)
     options.painter()->setRenderHint(QPainter::SmoothPixmapTransform, true);
 
     QRectF baseRect(options.rect());
-    qreal radius(0.5);
+    qreal radius(0.5 * qMin(baseRect.width(), baseRect.height()));
 
-    // content
+    options.painter()->setPen(Qt::NoPen);
     if (options.color().isValid()) {
         options.painter()->setBrush(options.color());
-
     }
-    if (options.outlineColor().isValid()) {
-        options.painter()->setPen(options.outlineColor());
-    }
-    options.painter()->drawRoundedRect(baseRect.translated(0.5, 0.5), radius, radius);
+    options.painter()->drawRoundedRect(baseRect, radius, radius);
 
     options.painter()->restore();
 }
@@ -1060,7 +1056,7 @@ void Renderer::renderProgressBarBusyContents(const StyleOptions &options, bool h
     options.painter()->setRenderHint(QPainter::Antialiasing, true);
 
     QRectF baseRect(options.rect());
-    qreal radius(0.25 * Metrics::ProgressBar_Thickness);
+    qreal radius(0.5 * Metrics::ProgressBar_Thickness);
     QRectF contentRect;
     if (horizontal) {
         contentRect = QRect(baseRect.left(), baseRect.top(), Metrics::ProgressBar_BusyIndicatorSize, baseRect.height());

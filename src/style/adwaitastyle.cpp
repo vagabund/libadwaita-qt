@@ -3374,13 +3374,25 @@ bool Style::drawFrameMenuPrimitive(const QStyleOption *option, QPainter *painter
     const QPalette &palette(option->palette);
     bool hasAlpha(_helper->hasAlphaChannel(widget));
 
-    StyleOptions styleOptions(painter, option->rect);
-    styleOptions.setColor(Colors::frameBackgroundColor(StyleOptions(palette, _variant)));
-    styleOptions.setOutlineColor(Colors::frameOutlineColor(StyleOptions(palette, _variant)));
-    styleOptions.setColorVariant(_variant);
+    if (qobject_cast<const QToolBar *>(widget)) {
+        // flat toolbar: button-color background + single bottom separator
+        QRect rect(option->rect);
+        painter->save();
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(palette.color(QPalette::Button));
+        painter->drawRect(rect);
 
-    if (qobject_cast<const QToolBar *>(widget) || isQtQuickControl(option, widget)) {
-       Adwaita::Renderer::renderMenuFrame(styleOptions, hasAlpha);
+        StyleOptions sepOptions(option->palette, _variant);
+        QColor sep(Colors::separatorColor(sepOptions));
+        painter->setPen(sep);
+        painter->drawLine(rect.bottomLeft(), rect.bottomRight());
+        painter->restore();
+    } else if (isQtQuickControl(option, widget)) {
+        StyleOptions styleOptions(painter, option->rect);
+        styleOptions.setColor(Colors::frameBackgroundColor(StyleOptions(palette, _variant)));
+        styleOptions.setOutlineColor(Colors::frameOutlineColor(StyleOptions(palette, _variant)));
+        styleOptions.setColorVariant(_variant);
+        Adwaita::Renderer::renderMenuFrame(styleOptions, hasAlpha);
     }
 
     return true;
@@ -3900,17 +3912,10 @@ bool Style::drawPanelTipLabelPrimitive(const QStyleOption *option, QPainter *pai
 
     bool hasAlpha(_helper->hasAlphaChannel(widget));
 
-    if (hasAlpha) {
-        int alpha = styleHint(SH_ToolTipLabel_Opacity, option, widget);
-        int h, s, l, a;
-        background.getHsl(&h, &s, &l, &a);
-        background = QColor::fromHsl(h, s, l, alpha);
-    }
-
     StyleOptions styleOptions(painter, option->rect);
     styleOptions.setColor(background);
     styleOptions.setColorVariant(_variant);
-    styleOptions.setOutlineColor(Colors::transparentize(QColor("black"), 0.3));
+    styleOptions.setOutlineColor(Qt::transparent);
 
     Adwaita::Renderer::renderMenuFrame(styleOptions, hasAlpha);
     return true;
@@ -5314,8 +5319,9 @@ bool Style::drawProgressBarGrooveControl(const QStyleOption *option, QPainter *p
     styleOptions.setAnimationMode(AnimationNone);
     styleOptions.setPainter(painter);
     styleOptions.setRect(option->rect);
-    styleOptions.setColor(Colors::mix(Colors::buttonOutlineColor(styleOptions), palette.color(QPalette::Window)));
-    styleOptions.setOutlineColor(Colors::mix(Colors::buttonOutlineColor(styleOptions), palette.color(QPalette::Window)));
+    QColor grooveColor(Colors::alphaColor(palette.color(QPalette::Highlight), 0.2));
+    styleOptions.setColor(grooveColor);
+    styleOptions.setOutlineColor(QColor());
 
     Adwaita::Renderer::renderProgressBarGroove(styleOptions);
     return true;
