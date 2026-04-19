@@ -303,10 +303,8 @@ void Renderer::renderFlatRoundedButtonFrame(const StyleOptions &options)
         options.painter()->setPen(Qt::NoPen);
     }
 
-    // content
-        if (options.color().isValid() && options.active()) {
-        options.painter()->setBrush(Colors::buttonBackgroundGradient(options));
-    } else if (!options.active()) {
+    // content — flat fill
+    if (options.color().isValid()) {
         options.painter()->setBrush(options.color());
     } else {
         options.painter()->setBrush(Qt::NoBrush);
@@ -419,10 +417,8 @@ void Renderer::renderButtonFrame(const StyleOptions &options)
         options.painter()->setPen(Qt::NoPen);
     }
 
-    // content
-    if (options.color().isValid() && options.active()) {
-        options.painter()->setBrush(Colors::buttonBackgroundGradient(options));
-    } else if (!options.active()) {
+    // content — flat fill, no gradient
+    if (options.color().isValid()) {
         options.painter()->setBrush(options.color());
     } else {
         options.painter()->setBrush(Qt::NoBrush);
@@ -430,13 +426,6 @@ void Renderer::renderButtonFrame(const StyleOptions &options)
 
     // render
     options.painter()->drawRoundedRect(frameRect, radius, radius);
-
-    if (!options.sunken() && options.active() && options.color().isValid()) {
-        options.painter()->setPen(options.color().lighter(140));
-        options.painter()->drawLine(frameRect.topLeft() + QPoint(3, 1), frameRect.topRight() + QPoint(-3, 1));
-        options.painter()->setPen(options.outlineColor().darker(114));
-        options.painter()->drawLine(frameRect.bottomLeft() + QPointF(2.7, 0), frameRect.bottomRight() + QPointF(-2.7, 0));
-    }
 
     options.painter()->restore();
 }
@@ -914,10 +903,8 @@ void Renderer::renderSliderHandle(const StyleOptions &options, Side ticks, qreal
     } else
         options.painter()->setPen(Qt::NoPen);
 
-    // set brush
-    if (options.color().isValid() && options.active()) {
-        options.painter()->setBrush(Colors::buttonBackgroundGradient(options));
-    }  else if (!options.active()) {
+    // set brush — flat fill
+    if (options.color().isValid()) {
         options.painter()->setBrush(options.color());
     } else {
         options.painter()->setBrush(Qt::NoBrush);

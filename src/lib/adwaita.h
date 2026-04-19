@@ -114,7 +114,7 @@ namespace PropertyNames
 enum Metrics {
     // frames
     Frame_FrameWidth = 4,
-    Frame_FrameRadius = 5,
+    Frame_FrameRadius = 7,
 
     // layout
     Layout_TopLevelMarginWidth = 10,

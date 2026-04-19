@@ -56,40 +56,40 @@
 @define-color focus_border_color rgba(53, 132, 228, 0.7);
 @define-color alt_focus_border_color rgba(255, 255, 255, 0.3);
 @define-color dim_label_opacity 0.55;
-button { color: #eeeeec; outline-color: rgba(21, 83, 158, 0.7); border-color: #1b1b1b; background-image: linear-gradient(to top, #373737 2px, #3a3a3a); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07); }
+button { color: #ffffff; outline-color: rgba(53, 132, 228, 0.7); border-color: #3a3a41; background-image: image(#2e2e35); }
 
-button:hover { color: #eeeeec; border-color: #1b1b1b; background-image: linear-gradient(to top, #303030 20%, #323232 90%); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07); }
+button:hover { color: #ffffff; border-color: #3a3a41; background-image: image(#383840); }
 
-button:checked { color: #eeeeec; border-color: #1b1b1b; background-image: image(#232323); box-shadow: none; }
+button:checked { color: #ffffff; border-color: #3a3a41; background-image: image(#3e3e4b); box-shadow: none; }
 
-button:checked:hover { color: #eeeeec; border-color: #1b1b1b; background-image: image(#1b1b1b); box-shadow: none; }
+button:checked:hover { color: #ffffff; border-color: #3a3a41; background-image: image(#464655); box-shadow: none; }
 
-button:checked:active { color: #eeeeec; border-color: #1b1b1b; background-image: image(#161616); box-shadow: none; }
+button:checked:active { color: #ffffff; border-color: #3a3a41; background-image: image(#4e4e60); box-shadow: none; }
 
-button:backdrop { color: #919190; border-color: #202020; background-image: image(#353535); box-shadow: none; }
+button:backdrop { color: #919193; border-color: #35353c; background-image: image(#2a2a31); box-shadow: none; }
 
-button:backdrop:active { color: #919190; border-color: #202020; background-image: image(#2e2e2e); box-shadow: none; }
+button:backdrop:active { color: #919193; border-color: #35353c; background-image: image(#333340); box-shadow: none; }
 
-button:backdrop:insensitive { color: #5b5b5b; border-color: #202020; background-image: image(#323232); box-shadow: none; }
+button:backdrop:insensitive { color: #46464e; border-color: #35353c; background-image: image(#202024); box-shadow: none; }
 
-button:backdrop:insensitive:active { color: #5b5b5b; border-color: #202020; background-image: image(#2e2e2e); box-shadow: none; }
+button:backdrop:insensitive:active { color: #46464e; border-color: #35353c; background-image: image(#333340); box-shadow: none; }
 
-button:disabled { color: #919190; border-color: #202020; background-image: image(#323232); }
+button:disabled { color: #919193; border-color: #35353c; background-image: image(#202024); }
 
-button:disabled:active { color: #919190; border-color: #202020; background-image: image(#292929); box-shadow: none; }
+button:disabled:active { color: #919193; border-color: #35353c; background-image: image(#2a2a31); box-shadow: none; }
 
-checkradio { background-clip: padding-box; background-image: linear-gradient(to bottom, #424242 20%, #353535 90%); border-color: #070707; box-shadow: 0 1px rgba(0, 0, 0, 0.05); color: #ffffff; }
+checkradio { background-clip: padding-box; background-image: image(#2e2e35); border-color: #4d4d56; box-shadow: 0 1px rgba(0, 0, 0, 0.05); color: #ffffff; }
 
-checkradio:hover { background-image: linear-gradient(to bottom, #4c4c4c 10%, #3f3f3f 90%); }
+checkradio:hover { background-image: image(#383840); }
 
-checkradio:active { box-shadow: inset 0 1px black; background-image: image(#282828); }
+checkradio:active { box-shadow: inset 0 1px black; background-image: image(#1d1d20); }
 
-checkradio:disabled { box-shadow: none; color: rgba(255, 255, 255, 0.7); }
+checkradio:disabled { box-shadow: none; color: rgba(255, 255, 255, 0.5); }
 
-checkradio:checked { background-clip: border-box; background-image: linear-gradient(to bottom, #185fb4 20%, #15539e 90%); border-color: #092444; box-shadow: 0 1px rgba(0, 0, 0, 0.05); color: #ffffff; }
+checkradio:checked { background-clip: border-box; background-image: image(#3584e4); border-color: #16519b; box-shadow: 0 1px rgba(0, 0, 0, 0.05); color: #ffffff; }
 
-checkradio:checked:hover { background-image: linear-gradient(to bottom, #1b68c6 10%, #185cb0 90%); }
+checkradio:checked:hover { background-image: image(#4b8fe6); }
 
-checkradio:checked:active { box-shadow: inset 0 1px black; background-image: image(#124787); }
+checkradio:checked:active { box-shadow: inset 0 1px black; background-image: image(#2072df); }
 
-checkradio:checked:disabled { box-shadow: none; color: rgba(255, 255, 255, 0.7); }
+checkradio:checked:disabled { box-shadow: none; color: rgba(255, 255, 255, 0.5); }
