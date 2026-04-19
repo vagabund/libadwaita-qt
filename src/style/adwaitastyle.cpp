@@ -3333,12 +3333,7 @@ bool Style::drawFrameLineEditPrimitive(const QStyleOption *option, QPainter *pai
         styleOptions.setColor(palette.currentColorGroup() == QPalette::Disabled ? palette.color(QPalette::Window) : palette.color(QPalette::Base));
         styleOptions.setOutlineColor(Colors::inputOutlineColor(styleOptions));
 
-        // render
-        if (qobject_cast<const QComboBox *>(widget)) {
-            Adwaita::Renderer::renderFlatFrame(styleOptions);
-        } else {
-            Adwaita::Renderer::renderFrame(styleOptions);
-        }
+        Adwaita::Renderer::renderFrame(styleOptions);
     }
 
     return true;
@@ -5007,11 +5002,14 @@ bool Style::drawMenuItemControl(const QStyleOption *option, QPainter *painter, c
 
     // render hover and focus
     if (useStrongFocus && (selected || sunken)) {
-        StyleOptions styleOptions(painter, rect);
-        styleOptions.setColor(Colors::selectedMenuColor(StyleOptions(palette, _variant)));
-        styleOptions.setColorVariant(_variant);
-        styleOptions.setOutlineColor(Qt::transparent);
-        Adwaita::Renderer::renderFocusRect(styleOptions);
+        QRectF highlightRect(rect.adjusted(Metrics::MenuItem_MarginWidth, 1, -Metrics::MenuItem_MarginWidth, -1));
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing, true);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(Colors::selectedMenuColor(StyleOptions(palette, _variant)));
+        qreal radius = qMax(qreal(Metrics::Frame_FrameRadius) - 1.5, 0.0);
+        painter->drawRoundedRect(highlightRect, radius, radius);
+        painter->restore();
     }
 
     // get rect available for contents
@@ -6552,31 +6550,21 @@ bool Style::drawComboBoxComplexControl(const QStyleOptionComplex *option, QPaint
                 painter->setPen(Qt::NoPen);
                 painter->drawRect(rect);
             } else {
-                AnimationMode mode(_animations->inputWidgetEngine().buttonAnimationMode(widget));
-                qreal opacity(_animations->inputWidgetEngine().buttonOpacity(widget));
+                AnimationMode mode(_animations->inputWidgetEngine().frameAnimationMode(widget));
+                qreal opacity(_animations->inputWidgetEngine().frameOpacity(widget));
 
                 // Style options
                 styleOptions.setAnimationMode(mode);
                 styleOptions.setOpacity(opacity);
-
-                // define colors
-                QColor shadow(Colors::shadowColor(styleOptions));
-                QColor outline(Colors::buttonOutlineColor(styleOptions));
-                QColor background(Colors::buttonBackgroundColor(styleOptions));
-
                 styleOptions.setPainter(painter);
                 styleOptions.setRect(rect);
-                styleOptions.setColor(background);
-                styleOptions.setOutlineColor(outline);
                 styleOptions.setActive(enabled && windowActive);
+                styleOptions.setColor(palette.currentColorGroup() == QPalette::Disabled
+                    ? palette.color(QPalette::Window)
+                    : palette.color(QPalette::Base));
+                styleOptions.setOutlineColor(Colors::inputOutlineColor(styleOptions));
 
-                // render
-                Adwaita::Renderer::renderButtonFrame(styleOptions);
-
-                QStyleOptionComplex tmpOpt(*option);
-                tmpOpt.rect.setWidth(tmpOpt.rect.width() - subControlRect(CC_ComboBox, option, SC_ComboBoxArrow, widget).width() + 3);
-
-                drawPrimitive(PE_FrameLineEdit, &tmpOpt, painter, widget);
+                Adwaita::Renderer::renderFrame(styleOptions);
             }
         } else {
             AnimationMode mode(_animations->inputWidgetEngine().buttonAnimationMode(widget));
@@ -7220,9 +7208,9 @@ void Style::renderSpinBoxArrow(const SubControl &subControl, const QStyleOptionS
 
     // enable state
     bool hasFocus(state & State_HasFocus);
+    Q_UNUSED(hasFocus)
     bool enabled(state & State_Enabled);
     bool sunken(state & State_Sunken && option->activeSubControls & subControl);
-    const QColor &outline = Colors::frameOutlineColor(StyleOptions(palette, _variant)).lighter(120);
 
     // check steps enable step
     const bool atLimit((subControl == SC_SpinBoxUp && !(option->stepEnabled & QAbstractSpinBox::StepUpEnabled))
@@ -7258,29 +7246,12 @@ void Style::renderSpinBoxArrow(const SubControl &subControl, const QStyleOptionS
     // arrow rect
     QRect arrowRect(subControlRect(CC_SpinBox, option, subControl, widget));
 
-    if (subControl == SC_SpinBoxDown) {
-        painter->setBrush(Qt::NoBrush);
-        painter->setPen(outline);
-        int highlight = hasFocus ? 1 : 0;
-        painter->drawLine(arrowRect.left(), arrowRect.top() + 2 + highlight, arrowRect.left(), arrowRect.bottom() - 1 - highlight);
-    }
-    if (subControl == SC_SpinBoxUp) {
-        painter->setBrush(Qt::NoBrush);
-        painter->setPen(outline);
-        int highlight = hasFocus ? 1 : 0;
-        painter->drawLine(arrowRect.left(), arrowRect.top() + 2 + highlight, arrowRect.left(), arrowRect.bottom() - 1 - highlight);
-    }
-
-    if (true) {
+    if (opacity > 0 || pressedOpacity > 0) {
         painter->setPen(Qt::NoPen);
         QColor background = Colors::mix(palette.base().color(), palette.text().color(), opacity * 0.1);
         background = Colors::mix(background, palette.dark().color(), pressedOpacity);
         painter->setBrush(background);
-        if (hasFocus) {
-            painter->drawRect(arrowRect.adjusted(1, 3, -1, -2));
-        } else {
-            painter->drawRect(arrowRect.adjusted(1, 2, -1, -1));
-        }
+        painter->drawRect(arrowRect.adjusted(1, 2, -1, -1));
     }
 
     // render

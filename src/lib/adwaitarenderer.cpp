@@ -373,14 +373,12 @@ void Renderer::renderMenuFrame(const StyleOptions &options, bool roundCorners)
 
     options.painter()->save();
 
-    // set brush
     if (options.color().isValid()) {
         options.painter()->setBrush(options.color());
     } else {
         options.painter()->setBrush(Qt::NoBrush);
     }
 
-    options.painter()->setRenderHint(QPainter::Antialiasing, false);
     QRectF frameRect(options.rect());
     if (options.outlineColor().isValid()) {
         options.painter()->setPen(options.outlineColor());
@@ -389,7 +387,14 @@ void Renderer::renderMenuFrame(const StyleOptions &options, bool roundCorners)
         options.painter()->setPen(Qt::NoPen);
     }
 
-    options.painter()->drawRect(frameRect);
+    if (roundCorners) {
+        options.painter()->setRenderHint(QPainter::Antialiasing, true);
+        options.painter()->drawRoundedRect(frameRect, 8.0, 8.0);
+    } else {
+        options.painter()->setRenderHint(QPainter::Antialiasing, false);
+        options.painter()->drawRect(frameRect);
+    }
+
     options.painter()->restore();
 }
 
@@ -454,9 +459,7 @@ void Renderer::renderCheckBoxFrame(const StyleOptions &options)
         options.painter()->setPen(Qt::NoPen);
     }
 
-    if (options.color().isValid() && options.active()) {
-        options.painter()->setBrush(Colors::indicatorBackgroundGradient(options));
-    } else if (!options.active()) {
+    if (options.color().isValid()) {
         options.painter()->setBrush(options.color());
     } else {
         options.painter()->setBrush(Qt::NoBrush);
@@ -823,9 +826,7 @@ void Renderer::renderRadioButton(const StyleOptions &options, const QColor &tick
     QRectF frameRect(options.rect());
     frameRect.adjust(2, 2, -2, -2);
 
-    if (options.color().isValid() && options.active()) {
-        options.painter()->setBrush(Colors::indicatorBackgroundGradient(options));
-    } else if (!options.active()) {
+    if (options.color().isValid()) {
         options.painter()->setBrush(options.color());
     } else {
         options.painter()->setBrush(Qt::NoBrush);
