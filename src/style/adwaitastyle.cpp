@@ -7121,6 +7121,9 @@ bool Style::drawTitleBarComplexControl(const QStyleOptionComplex *option, QPaint
         // render text
         palette.setColor(QPalette::WindowText, Colors::titleBarTextColor(styleOptions));
         QRect textRect(subControlRect(CC_TitleBar, option, SC_TitleBarLabel, widget));
+        QFont boldFont(painter->font());
+        boldFont.setBold(true);
+        painter->setFont(boldFont);
         ParentStyleClass::drawItemText(painter, textRect, Qt::AlignCenter, palette, active, titleBarOption->text, QPalette::WindowText);
     }
 
