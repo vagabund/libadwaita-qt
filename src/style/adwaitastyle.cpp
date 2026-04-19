@@ -7042,11 +7042,15 @@ bool Style::drawScrollBarComplexControl(const QStyleOptionComplex *option, QPain
             grooveRect = centerRect(grooveRect, Metrics::ScrollBar_SliderWidth, grooveRect.height());
         }
 
-        // render
+        // render groove as rounded pill
         if (enabled) {
+            painter->save();
+            painter->setRenderHint(QPainter::Antialiasing, true);
             painter->setPen(Qt::NoPen);
             painter->setBrush(color);
-            painter->drawRect(option->rect);
+            qreal grooveRadius = 0.5 * (horizontal ? grooveRect.height() : grooveRect.width());
+            painter->drawRoundedRect(QRectF(grooveRect), grooveRadius, grooveRadius);
+            painter->restore();
         }
     }
 
