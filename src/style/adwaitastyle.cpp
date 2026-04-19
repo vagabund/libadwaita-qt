@@ -6042,8 +6042,8 @@ bool Style::drawTabBarTabShapeControl(const QStyleOption *option, QPainter *pain
     StyleOptions styleOptions(option->palette, _variant);
     styleOptions.setState(option->state);
 
-    // underline
-    QColor underline(enabled && selected ? Colors::focusColor(StyleOptions(palette, _variant)) : selected || mouseOver ? option->palette.color(QPalette::Window).darker() : Qt::transparent);
+    // underline: accent pill for selected tab only
+    QColor underline(enabled && selected ? Colors::focusColor(StyleOptions(palette, _variant)) : Qt::transparent);
 
     // outline
     QColor outline = QColor();
@@ -6051,8 +6051,11 @@ bool Style::drawTabBarTabShapeControl(const QStyleOption *option, QPainter *pain
         outline = Colors::frameOutlineColor(StyleOptions(palette, _variant));
     }
 
-    // background
-    QColor background = Colors::tabBarColor(styleOptions);
+    // background: subtle fill on hover, transparent otherwise
+    QColor background;
+    if (mouseOver && !selected) {
+        background = Colors::mix(palette.color(QPalette::Window), palette.color(QPalette::WindowText), 0.07);
+    }
 
     // render
     QRegion oldRegion(painter->clipRegion());

@@ -1116,42 +1116,61 @@ void Renderer::renderTabBarTab(const StyleOptions &options, const QColor &backgr
         return;
     }
 
-    // setup options.painter()
     options.painter()->save();
-    options.painter()->setRenderHint(QPainter::Antialiasing, false);
+    options.painter()->setRenderHint(QPainter::Antialiasing, true);
 
     QRectF frameRect(options.rect());
-    qreal adjustment;
 
-    // pen
+    // movable tab: draw frame outline + background
     if (options.outlineColor().isValid()) {
         options.painter()->setPen(options.outlineColor());
         frameRect.adjust(1.0, 1.0, -1.0, -1.0);
-        adjustment = 0;
-
-        options.painter()->setBrush(background);
-
-        // render
-        options.painter()->drawRect(frameRect);
-    } else if (!renderFrame) {
-        adjustment = 9;
+        if (background.isValid()) {
+            options.painter()->setBrush(background);
+        } else {
+            options.painter()->setBrush(Qt::NoBrush);
+        }
+        options.painter()->drawRect(frameRect.adjusted(0.5, 0.5, -0.5, -0.5));
     }
 
-    options.painter()->setPen(QPen(options.color(), 6));
+    // hover background: subtle rounded fill
+    if (background.isValid() && !options.outlineColor().isValid()) {
+        options.painter()->setPen(Qt::NoPen);
+        options.painter()->setBrush(background);
+        qreal r = frameRadius(-1.0);
+        options.painter()->drawRoundedRect(frameRect.adjusted(1, 1, -1, -1), r, r);
+    }
 
-    switch (corners) {
-    case CornersTop:
-        options.painter()->drawLine(frameRect.left() + adjustment, frameRect.bottom(), frameRect.right() - adjustment, frameRect.bottom());
-        break;
-    case CornersBottom:
-        options.painter()->drawLine(frameRect.left() + adjustment, frameRect.top(), frameRect.right() - adjustment, frameRect.top());
-        break;
-    case CornersLeft:
-        options.painter()->drawLine(frameRect.right(), frameRect.top() + adjustment, frameRect.right(), frameRect.bottom() - adjustment);
-        break;
-    case CornersRight:
-        options.painter()->drawLine(frameRect.left(), frameRect.top() + adjustment, frameRect.left(), frameRect.bottom() - adjustment);
-        break;
+    // indicator pill for selected/active tab
+    if (options.color().isValid() && options.color() != Qt::transparent) {
+        const qreal thickness = 3.0;
+        const qreal hInset = renderFrame ? 0.0 : 8.0;
+        QRectF pillRect;
+
+        switch (corners) {
+        case CornersTop:
+            pillRect = QRectF(frameRect.left() + hInset, frameRect.bottom() - thickness + 1,
+                              frameRect.width() - 2 * hInset, thickness);
+            break;
+        case CornersBottom:
+            pillRect = QRectF(frameRect.left() + hInset, frameRect.top(),
+                              frameRect.width() - 2 * hInset, thickness);
+            break;
+        case CornersLeft:
+            pillRect = QRectF(frameRect.right() - thickness + 1, frameRect.top() + hInset,
+                              thickness, frameRect.height() - 2 * hInset);
+            break;
+        case CornersRight:
+            pillRect = QRectF(frameRect.left(), frameRect.top() + hInset,
+                              thickness, frameRect.height() - 2 * hInset);
+            break;
+        default:
+            break;
+        }
+
+        options.painter()->setPen(Qt::NoPen);
+        options.painter()->setBrush(options.color());
+        options.painter()->drawRoundedRect(pillRect, thickness / 2, thickness / 2);
     }
 
     options.painter()->restore();
