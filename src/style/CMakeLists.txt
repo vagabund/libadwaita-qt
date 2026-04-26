@@ -6,6 +6,7 @@ include_directories(
 )
 
 set(Adwaita_SRCS
+    adwaitacolorschemewatcher.cpp
     adwaitahelper.cpp
     adwaitastyle.cpp
     adwaitastyleplugin.cpp

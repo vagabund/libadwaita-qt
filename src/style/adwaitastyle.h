@@ -46,6 +46,7 @@ class TabBarData;
 namespace Adwaita
 {
 class Animations;
+class ColorSchemeWatcher;
 class Helper;
 class Mnemonics;
 class SplitterFactory;
@@ -554,8 +555,14 @@ private:
 
     bool _dark { false };
 
+    bool _autoVariant { false };
+    ColorSchemeWatcher *_colorSchemeWatcher { nullptr };
+
     bool _isGNOME { false };
     bool _isKDE { false };
+
+private Q_SLOTS:
+    void onColorSchemeChanged(bool dark);
 
     //@}
 };

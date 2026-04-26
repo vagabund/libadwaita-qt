@@ -21,6 +21,7 @@
 
 // Adwaita style
 #include "adwaitastyle.h"
+#include "adwaitacolorschemewatcher.h"
 #include "adwaitahelper.h"
 
 // Adwaita lib
@@ -232,15 +233,52 @@ Style::Style(ColorVariant variant)
     , _tabBarData(new AdwaitaPrivate::TabBarData(this))
     , _variant(variant)
     , _dark(variant == AdwaitaDark || variant == AdwaitaHighcontrastInverse)
+    , _autoVariant(variant == AdwaitaAuto)
 {
     // Detect if running under KDE, if so set menus, etc, to have translucent background.
     // For GNOME desktop, dont want translucent backgrounds otherwise no menu shadow is drawn.
     _isKDE = qgetenv("XDG_CURRENT_DESKTOP").toLower() == "kde";
     _isGNOME = qgetenv("XDG_CURRENT_DESKTOP").toLower() == "gnome";
 
+    if (_autoVariant) {
+        _colorSchemeWatcher = new ColorSchemeWatcher(this);
+        const bool dark = _colorSchemeWatcher->prefersDark();
+        _variant = dark ? AdwaitaDark : Adwaita;
+        _dark = dark;
+        connect(_colorSchemeWatcher, &ColorSchemeWatcher::colorSchemeChanged,
+                this, &Style::onColorSchemeChanged);
+    }
+
     // call the slot directly; this initial call will set up things that also
     // need to be reset when the system palette changes
     loadConfiguration();
+}
+
+//______________________________________________________________
+void Style::onColorSchemeChanged(bool dark)
+{
+    if (!_autoVariant) {
+        return;
+    }
+
+    const ColorVariant newVariant = dark ? AdwaitaDark : Adwaita;
+    if (newVariant == _variant) {
+        return;
+    }
+
+    _variant = newVariant;
+    _dark = dark;
+    _iconCache.clear();
+
+    if (qApp) {
+        qApp->setPalette(Colors::palette(_variant));
+        const QWidgetList tops = qApp->topLevelWidgets();
+        for (QWidget *w : tops) {
+            if (w) {
+                w->update();
+            }
+        }
+    }
 }
 
 //______________________________________________________________
