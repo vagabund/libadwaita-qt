@@ -2,3 +2,21 @@
 build
 CMakeLists.txt.user*
 
+
+# in-source CMake builds
+build-*/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+*_autogen/
+.qt/
+*.so
+*.so.*
+src/lib/AdwaitaQt*Config*.cmake
+src/lib/adwaita-qt*.pc
+src/lib/config-adwaita.h
+src/lib/qrc_stylesheet.cpp
+src/lib/stylesheet/stylesheet.qrc
+src/lib/stylesheet/stylesheet.qrc.depends

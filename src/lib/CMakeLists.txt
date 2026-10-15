@@ -65,8 +65,13 @@ target_link_libraries("adwaitaqt${ADWAITAQT_SUFFIX}priv"
 )
 
 # We need this done before we start building adwaitaqt public library
-find_program(SASSC_EXECUTABLE sassc)
-if (SASSC_EXECUTABLE)
+# The colors in stylesheet/processed are tuned by hand and are the reference;
+# the SCSS sources have not been updated to match them yet.
+option(REGENERATE_STYLESHEETS "Regenerate stylesheets from the SCSS sources with sassc" OFF)
+if (REGENERATE_STYLESHEETS)
+    find_program(SASSC_EXECUTABLE sassc REQUIRED)
+endif()
+if (REGENERATE_STYLESHEETS AND SASSC_EXECUTABLE)
     set(Variants "light" "dark" "hc" "hc-dark")
     foreach(VARIANT IN LISTS Variants)
         add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/stylesheet/Adwaita-${VARIANT}.css"
