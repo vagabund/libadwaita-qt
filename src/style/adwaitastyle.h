@@ -82,6 +82,9 @@ public:
     //* widget unpolishing
     virtual void unpolish(QWidget *widget);
 
+    //* application polishing
+    virtual void polish(QApplication *app);
+
     //* palette polishing
     virtual void polish(QPalette &palette);
 
@@ -381,6 +384,9 @@ protected:
 
     //* translucent background
     void setTranslucentBackground(QWidget *widget) const;
+
+    //* set our palette on the application, overriding per-class platform theme palettes
+    void applyApplicationPalette(QApplication *app) const;
 
     /**
     separator can have a title and an icon

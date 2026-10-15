@@ -271,7 +271,7 @@ void Style::onColorSchemeChanged(bool dark)
     _iconCache.clear();
 
     if (qApp) {
-        qApp->setPalette(Colors::palette(_variant));
+        applyApplicationPalette(qApp);
         const QWidgetList tops = qApp->topLevelWidgets();
         for (QWidget *w : tops) {
             if (w) {
@@ -532,6 +532,35 @@ void Style::unpolish(QWidget *widget)
     }
 
     ParentStyleClass::unpolish(widget);
+}
+
+void Style::polish(QApplication *app)
+{
+    ParentStyleClass::polish(app);
+    applyApplicationPalette(app);
+}
+
+void Style::applyApplicationPalette(QApplication *app) const
+{
+    if (!app) {
+        return;
+    }
+
+    // Platform themes like Qt's gtk3 (the default on GNOME) install their own
+    // palettes for these widget classes, which take precedence over the
+    // application palette and mix GTK colors into ours.
+    static const char *const themedClasses[] = {
+        "QToolButton", "QAbstractButton", "QCheckBox", "QRadioButton",
+        "QHeaderView", "QAbstractItemView", "QMessageBoxLabel", "QTabBar",
+        "QLabel", "QGroupBox", "QMenu", "QMenuBar", "QTextEdit",
+        "QTextControl", "QLineEdit", "QComboBox",
+    };
+
+    const QPalette palette = Colors::palette(_variant);
+    app->setPalette(palette);
+    for (const char *className : themedClasses) {
+        app->setPalette(palette, className);
+    }
 }
 
 void Style::polish(QPalette &palette)
